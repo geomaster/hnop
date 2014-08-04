@@ -1,7 +1,7 @@
 # Needed for some bashisms ({} expansion)
 SHELL=/bin/bash
 
-default: release
+default: prereqs release
 
 # All source files
 IMAGEFILES=$(shell find assets/images/ -type f)
