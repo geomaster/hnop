@@ -3,13 +3,19 @@ SHELL=/bin/bash
 
 default: prereqs release
 
+# Flags
+SASSFLAGS=-I external/sass
+
+# Some prereqs
+SCSSPARTIALS=$(shell find scss/ -type f -name '_*.scss')
+
 # All source files
 IMAGEFILES=$(shell find assets/images/ -type f)
 FONTFILES=$(shell find assets/fonts/ -type f)
 JSFILES=$(shell find js/ -type f -name '*.js')
 JSLIBS=
 JSLIBFILES=$(patsubst %.js,external/js/%.js,$(JSLIBS))
-SCSSFILES=$(shell find scss/ -type f -name '*.scss')
+SCSSFILES=$(filter-out $(SCSSPARTIALS),$(shell find scss/ -type f -name '*.scss'))
 HTMLFILES=$(shell find html/ -type f -name '*.html')
 ASSETS=$(IMAGEFILES) $(FONTFILES)
 
@@ -62,13 +68,13 @@ external/tools/closurecompiler:
 	cd .. && rm -rf temp; 
 
 build-debug/css/%.css: scss/%.scss
-	sass -t expanded $< $@
+	sass -t expanded $(SASSFLAGS) $< $@;
 
 build-debug/js/%.js: js/%.js
 	cp $< $@
 
 build-release/css/%.css: scss/%.scss
-	sass -t compressed $< $@
+	sass -t compressed $(SASSFLAGS) $< $@
 
 build-release/$(OUTMINJS): $(JSFILES)
 	scripts/jsc.bash $(JSFILES) --js_output_file $@
