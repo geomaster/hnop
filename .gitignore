@@ -3,5 +3,6 @@ webapp/external
 webapp/build-debug
 webapp/build-release
 *~
+*.vim
 
 
