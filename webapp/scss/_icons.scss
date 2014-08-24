@@ -1,0 +1,31 @@
+/* <Icons> */
+
+.icon {
+    display: inline-block;
+    font-family: "HNOPIcons";
+}
+
+.icon.icon-plus:before {
+    content: "\e000";
+}
+
+.icon.icon-comment:before {
+    content: "\e001";
+}
+
+.icon.icon-user:before {
+    content: "\e002";
+}
+
+.icon.icon-notification {
+    /* just use this typeface for the time being */
+    font-family: $typestack-ui;
+}
+
+.icon.icon-notification:before {
+    content: "*";
+    font-weight: bold;
+    width: 1em;
+}
+
+/* </Icons> */

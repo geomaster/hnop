@@ -1,0 +1,13 @@
+/* <Unsemantic> */
+
+$unsemantic-ie7-support: false;
+$media-mobile-max: 767px;
+$media-desktop-min: 768px;
+
+@import 'unsemantic/partials/unsemantic-vars';
+@import 'unsemantic/partials/unsemantic-ie-snap';
+
+@include unsemantic-grid-placeholders;
+
+/* </Unsemantic> */
+

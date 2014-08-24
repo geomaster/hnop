@@ -1,0 +1,26 @@
+/* <Variables> */
+
+$colorscheme-background-main: white;
+$colorscheme-background-accent: #ffebdf;
+$colorscheme-main: #e75700;
+$colorscheme-brand: #e75700;
+$colorscheme-light: #ffc7a5;
+$colorscheme-dark: #be4700;
+$colorscheme-accent: #ff6000;
+$colorscheme-text-main: black;
+$colorscheme-text-alt: white;
+$colorscheme-text-light: #7b7b7b;
+$colorscheme-text-accent: $colorscheme-main;
+$colorscheme-text-accent-alt: $colorscheme-light;
+
+$typestack-ui: "Raleway", "Helvetica Neue", "Helvetica", sans-serif;
+$typestack-brand: $typestack-ui;
+$typestack-big-title: "ChunkFive", "Rockwell", "Georgia", serif;
+$typestack-small-title: "Source Sans Pro", "Helvetica Neue", "Helvetica", sans-serif;
+$typestack-numbers: $typestack-small-title;
+
+$pathname-font-prefix: "../fonts";
+
+$metrics-main-header-height: 6rem;
+
+/* </Variables> */

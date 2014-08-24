@@ -1,0 +1,19 @@
+/* <Utilities> */
+
+html {
+    font-size: 62.5%; /* 1rem = 10px */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.group:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+/* </Utilities> */

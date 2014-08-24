@@ -1,0 +1,12 @@
+/* <Typefaces> */
+
+/* Homegrown icon font */
+@font-face {
+    font-family: "HNOPIcons";
+    font-weight: normal;
+
+    src: url('#{$pathname-font-prefix}/HNOPIcons.ttf') format('truetype');
+}
+
+/* </Typefaces> */
+
