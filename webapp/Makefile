@@ -6,6 +6,11 @@ default: prereqs release
 # Flags
 SASSFLAGS=-I external/sass
 WGETFLAGS=-nv
+PHPFLAGS=-n
+PHPFLAGS_DEBUG=
+PHPFLAGS_RELEASE=
+PHPARGS_DEBUG=debug
+PHPARGS_RELEASE=release
 
 # Utilities
 BASH_STARTRED=echo -ne '\e[00;31m'
@@ -22,7 +27,7 @@ FONTFILES=$(shell find assets/fonts/ -type f)
 JSFILES=$(shell find js/ -type f -name '*.js')
 JSLIBS=ember jquery handlebars
 SCSSFILES=$(filter-out $(SCSSPARTIALS),$(shell find scss/ -type f -name '*.scss'))
-HTMLFILES=$(shell find html/ -type f -name '*.html')
+PHPFILES=$(shell find html/ -type f -name '*.php')
 ASSETS=$(IMAGEFILES) $(FONTFILES)
 
 # Source dependencies
@@ -31,10 +36,10 @@ DEPS=$(ASSETS) $(JSFILES) $(SCSSFILES) $(HTMLFILES)
 # All output files
 OUTIMAGEFILES=$(patsubst assets/images/%,images/%,$(IMAGEFILES))
 OUTFONTFILES=$(patsubst assets/fonts/%,fonts/%,$(FONTFILES))
-OUTJSFILES=$(JSFILES)
+OUTJSFILES=$(JSFILES) js/handlebars/templates.js
 OUTJSLIBFILES=$(patsubst %,js/libs/%.js,$(JSLIBS))
 OUTCSSFILES=$(patsubst scss/%.scss,css/%.css,$(SCSSFILES))
-OUTHTMLFILES=$(patsubst html/%.html,%.html,$(HTMLFILES))
+OUTHTMLFILES=$(patsubst html/%.php,%.html,$(PHPFILES))
 OUTASSETS=$(OUTIMAGEFILES) $(OUTFONTFILES)
 OUTMINJS=js/app.min.js
 
@@ -63,7 +68,7 @@ dirs:
 	scripts/mkdirino.bash external external/sass external/js external/tools \
 	                      external/js/{debug,release} build-{debug,release} \
 	                      build-{debug,release}/{css,js,images,fonts} \
-	                      build-{debug,release}/js/libs
+	                      build-{debug,release}/js/{libs,handlebars}
 
 jsc: external/tools/closurecompiler
 
@@ -143,11 +148,19 @@ build-debug/images/% build-release/images/%: assets/images/%
 build-debug/fonts/% build-release/fonts/%: assets/fonts/%
 	cp $< $@
 	
-build-debug/%.html build-release/%.html: html/%.html
-	cp $< $@
+build-debug/%.html: html/%.php
+	php $(PHPFLAGS) $(PHPFLAGS_DEBUG) -f $< $(PHPARGS_DEBUG) >$@
+	
+build-release/%.html: html/%.php
+	php $(PHPFLAGS) $(PHPFLAGS_RELEASE) -f $< $(PHPARGS_RELEASE) >$@
+
+build-debug/js/handlebars/templates.js build-release/js/handlebars/templates.js: templates/*.handlebars
+	ember-precompile -b templates/ $^ -f $@
 
 clean:
 	scripts/clean.bash build-{debug,release}
+
+clean-prereqs:
 	rm -rf external/{tools,js,sass}
 
-.PHONY: prereqs debug release clean jsc
+.PHONY: prereqs debug release clean clean-prereqs ember handlebars jsc
