@@ -1,0 +1,327 @@
+
+@import 'vars';
+@import 'utils';
+@import 'base-elems';
+@import 'typefaces';
+@import 'icons';
+@import 'unsemantic';
+
+/* <HNOP> */
+
+body {
+    background: $colorscheme-background-main;
+    color: $colorscheme-text-main;
+}
+
+.brand {
+    margin: 0;
+    font-weight: normal;
+}
+
+.ylogo:before {
+    content: "Y";
+}
+
+.ylogo {
+    color: white;
+    font-family: "Helvetica Neue";
+    font-size: 34pt;
+    box-sizing: border-box;
+    margin-right: 1.6rem;
+    font-weight: 100;
+    line-height: $metrics-main-header-height;
+}
+
+.main-navbar, .brand {
+    float: left;
+}
+
+.brand .header-title {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: $metrics-main-header-height;
+    font-size: 16pt;
+}
+
+.ylogo {
+    float: left;
+}
+
+a {
+    text-decoration: none;
+}
+
+.main-navbar ul {
+    @extend .group;
+
+    list-style-type: none;
+    margin: 0;
+    padding: 0 0 0 3.7rem;
+
+    li#navlink-ask a, li#navlink-show a {
+        // background-color: $colorscheme-dark;
+        text-transform: uppercase;
+    }
+
+    li#navlink-ask a:hover, li#navlink-show a:hover {
+        color: $colorscheme-text-alt;
+        background-color: $colorscheme-accent;
+    }
+
+
+    li {
+        float: left;
+
+        a {
+            display: block;
+            width: 100%;
+            padding: 1.9rem 2rem;
+            box-sizing: border-box;
+
+            text-decoration: none;
+            text-transform: lowercase;
+            color: $colorscheme-text-accent-alt;
+            font-size: 14pt;
+            height: $metrics-main-header-height;
+        }
+
+        a:hover {
+            color: $colorscheme-text-alt;
+            background-color: $colorscheme-accent;
+        }
+    }
+
+}
+
+.userbar {
+    float: right;
+}
+
+.my-notifications-drawer-container {
+    @extend .group;
+    float: left;
+}
+
+.my-notifications-drawer {
+    display: block;
+
+    padding: 0.6rem 1.7rem 0.6rem 1.5rem;
+    background-color: $colorscheme-dark;
+    font-size: 20pt;
+    height: $metrics-main-header-height;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    .notification-count {
+        @extend %number-element;
+        color: $colorscheme-text-alt;
+    }
+
+    .icon-notification {
+        color: $colorscheme-text-accent;
+        vertical-align: -40%;
+        font-size: 52pt;
+    }
+}
+
+.my-notifications-drawer:hover {
+    background-color: $colorscheme-accent;
+
+    .icon-notification {
+        color: $colorscheme-text-accent-alt;
+    }
+}
+
+.my-account-container {
+    @extend .group;
+    float: left;
+}
+
+.my-account {
+    display: block;
+
+    padding: 1.7rem 1.7rem;
+    font-size: 14pt;
+    box-sizing: border-box;
+    height: $metrics-main-header-height;
+
+    .karma {
+        color: $colorscheme-text-accent-alt;
+        display: inline-block;
+        margin-right: 1.2rem;
+        font-weight: bold;
+
+    }
+
+    .username {
+        color: white;
+    }
+}
+
+.my-account:hover {
+    background-color: $colorscheme-accent;
+}
+
+.main-header {
+    @extend %ui-element;
+    background: $colorscheme-main;
+    color: $colorscheme-text-alt;
+    // height: $metrics-main-header-height;
+}
+
+.karma {
+    @extend %number-element;
+}
+
+.main-header-container {
+    @extend %grid-container;
+    // height: $metrics-main-header-height;
+}
+
+.headlining-posts {
+    background-color: $colorscheme-background-accent;
+}
+
+.headlining-post-wrapper {
+    @extend %grid-container;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+
+}
+
+.primary-headlines, .secondary-headlines {
+    @extend %grid-columns-all;
+}
+
+.post {
+    h2, h3, h4 {
+        a {
+            color: $colorscheme-text-main;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: $colorscheme-text-accent;
+        }
+
+        hyphens: auto;
+        -moz-hyphens: auto;
+    }
+
+    .website {
+        font-family: $typestack-small-title;
+        font-weight: lighter;
+        color: $colorscheme-text-light;
+    }
+    
+    .subsite {
+        color: $colorscheme-text-accent;
+    }
+}
+
+.secondary-headlines .post {
+    margin-top: 1rem;
+}
+
+.primary-headlines {
+    h2 {
+        font-family: $typestack-big-title;
+        margin: 0;
+        line-height: 125%;
+        font-weight: normal;
+        font-size: 34pt;
+    }
+
+    .post-details {
+        font-size: 17pt;
+        .icon {
+            font-size: 24pt;
+        }
+    }
+
+    .website {
+        font-size: 24pt;
+        vertical-align: 11%;
+    }
+}
+
+.secondary-headlines {
+    h3 {
+        font-family: $typestack-big-title;
+        margin: 0;
+        font-weight: normal;
+        font-size: 22pt;
+    }
+    
+    .post:not(:first-of-type) {
+        margin-top: 2.1rem;
+    }
+
+    .post-details {
+        font-size: 15pt;
+        .icon {
+            font-size: 22pt;
+        }
+    }
+
+    .website {
+        font-size: 14pt;
+        vertical-align: 9%;
+    }
+}
+
+@media screen and (max-width: $media-mobile-max) {
+    @include unsemantic-grid-placeholders(mobile);
+
+    .primary-headlines, .secondary-headlines {
+        @extend %mobile-grid-100;
+    }
+
+    .secondary-headlines .post:first-of-type {
+        margin-top: 2.1rem;
+    }
+
+}
+
+@media screen and (min-width: $media-desktop-min) {
+    @include unsemantic-grid-placeholders(desktop);
+
+    .primary-headlines, .secondary-headlines {
+        @extend %desktop-grid-50;
+    }
+}
+
+.plus-count, .comment-count {
+    width: 2.5em;
+}
+
+.post-details {
+    @extend .group;
+
+    font-family: $typestack-small-title;
+    font-weight: lighter;
+    color: $colorscheme-text-light;
+    margin-top: 0.3rem;
+
+    .icon {
+        font-size: 24pt;
+        margin-right: 0.8rem;
+        line-height: 90%;
+        color: $colorscheme-text-accent;
+        display: inline-block;
+    }
+
+    .icon-comment, .icon-user {
+    }
+
+    .icon, .plus-count, .comment-count, .username {
+        float: left;
+    }
+
+    .username {
+        color: $colorscheme-text-accent;
+    }
+}
+
+/* </HNOP> */
+

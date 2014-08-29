@@ -1,0 +1,67 @@
+<section class="headlining-posts">
+    <div class="headlining-post-wrapper">
+        <div class="primary-headlines">
+        {{#each post in primary_headlines}}
+            <div class="post">
+                <h2>{{#link-to 'posts' post}}{{post.title}}{{/link-to}} <span class="website">{{post.website}}</span></h2>
+
+                <div class="post-details">
+                    <div class="icon icon-plus"></div>
+                    <div class="plus-count">{{post.plus_count}}</div>
+
+                    <div class="icon icon-comment"></div>
+                    <div class="comment-count">{{post.comment_count}}</div>
+
+                    <div class="icon icon-user"></div>
+                    <div class="username">{{post.author}}</div>
+                </div>
+            </div>
+        {{/each}}
+        </div>
+
+        <div class="secondary-headlines">
+        {{#each post in secondary_headlines}}
+            <div class="post">
+                <h3>{{#link-to 'posts' post}}{{post.title}}{{/link-to}} <span class="website">{{post.website}}</span></h3>
+
+                <div class="post-details">
+                    <div class="icon icon-plus"></div>
+                    <div class="plus-count">{{post.plus_count}}</div>
+
+                    <div class="icon icon-comment"></div>
+                    <div class="comment-count">{{post.comment_count}}</div>
+
+                    <div class="icon icon-user"></div>
+                    <div class="username">{{post.author}}</div>
+                </div>
+            </div>
+        {{/each}}
+        </div>
+    </div>
+</section>
+<section class="posts">
+    <div class="posts-wrapper">
+        {{#each columns}}
+            <div class="{{unbound classname}}">
+                <ul>
+                    {{#each post in posts}}
+                        <li class="post">
+                            {{#link-to 'posts' post}}{{post.title}}{{/link-to}} <span class="website">{{post.website}}</span>
+
+                            <div class="post-details">
+                                <div class="icon icon-plus"></div>
+                                <div class="plus-count">{{post.plus_count}}</div>
+
+                                <div class="icon icon-comment"></div>
+                                <div class="comment-count">{{post.comment_count}}</div>
+
+                                <div class="icon icon-user"></div>
+                                <div class="username">{{post_author}}</div>
+                            </div>
+                        </li>
+                    {{/each}}
+                </ul>
+            </div>
+        {{/each}}
+    </div>
+</section>

@@ -1,0 +1,33 @@
+<header class="main-header">
+    <div class="main-header-container">
+        <h1 class="brand">
+            <div class="ylogo">
+            </div>
+            <span class="header-title">
+                {{appTitle}}
+            </span>
+        </h1>
+        <nav class="main-navbar">
+            <ul>
+                {{#each navbar}}
+                    <li id="{{unbound name}}"><a href="{{unbound url}}">{{title}}</a></li>
+                {{/each}}
+            </ul>
+        </nav>
+        <aside class="userbar">
+            <div class="my-notifications-drawer-container">
+                <a class="my-notifications-drawer" href="#">
+                    <span class="icon icon-notification"></span> 
+                    <span class="notification-count">{{notificationCount}}</span>
+                </a>
+            </div>
+            <div class="my-account-container">
+                <a class="my-account" href="#">
+                    <span class="karma">{{karma}}</span>
+                    <span class="username">{{username}}</span>
+                </a>
+            </div>
+        </aside>
+    </div>
+</header>
+{{outlet}}
