@@ -2,10 +2,18 @@
 
 /* Homegrown icon font */
 @font-face {
-    font-family: "HNOPIcons";
+    font-family: "HNOP-HNOPIcons";
     font-weight: normal;
 
     src: url('#{$pathname-font-prefix}/HNOPIcons.ttf') format('truetype');
+}
+
+/* Source Sans Pro Semibold */
+@font-face {
+    font-family: "HNOP-SourceSansPro";
+    font-weight: 500;
+
+    src: url('#{$pathname-font-prefix}/SourceSansPro-Semibold.otf') format('opentype');
 }
 
 /* </Typefaces> */
