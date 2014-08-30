@@ -186,10 +186,13 @@ a {
     @extend %grid-container;
     padding-top: 3rem;
     padding-bottom: 3rem;
-
 }
 
-.primary-headlines, .secondary-headlines {
+.posts-wrapper {
+    @extend %grid-container;
+}
+
+.primary-headlines, .secondary-headlines, .posts .left, .posts .right {
     @extend %grid-columns-all;
 }
 
@@ -270,6 +273,44 @@ a {
     }
 }
 
+.posts {
+    margin-bottom: 4rem;
+
+    ul {
+        padding: 0.8rem 0 0 0;
+        list-style-type: none;
+
+        li {
+            margin-top: 1.5rem;
+        }
+    }
+
+    .post {
+        font-size: 18pt;
+        font-family: $typestack-small-title;
+
+        a {
+            font-family: "HNOP-SourceSansPro";
+            font-weight: 500;
+
+            color: $colorscheme-text-main;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            color: $colorscheme-text-accent;
+        }
+    }
+
+    .website {
+        font-size: 14pt;
+    }
+
+    .post-details {
+        font-size: 16pt;
+    }
+}
+
 @media screen and (max-width: $media-mobile-max) {
     @include unsemantic-grid-placeholders(mobile);
 
@@ -281,6 +322,14 @@ a {
         margin-top: 2.1rem;
     }
 
+    .posts .left, .posts .right {
+        @extend %mobile-grid-100;
+    }
+
+    .posts .right ul {
+        padding-top: 0;
+    }
+
 }
 
 @media screen and (min-width: $media-desktop-min) {
@@ -289,6 +338,11 @@ a {
     .primary-headlines, .secondary-headlines {
         @extend %desktop-grid-50;
     }
+
+    .posts .left, .posts .right {
+        @extend %desktop-grid-50;
+    }
+
 }
 
 .plus-count, .comment-count {
@@ -322,6 +376,5 @@ a {
         color: $colorscheme-text-accent;
     }
 }
-
 /* </HNOP> */
 

@@ -3,6 +3,8 @@
 $unsemantic-ie7-support: false;
 $media-mobile-max: 767px;
 $media-desktop-min: 768px;
+$container-max-width: 1350px;
+$gutter-half: 1.5rem;
 
 @import 'unsemantic/partials/unsemantic-vars';
 @import 'unsemantic/partials/unsemantic-ie-snap';
