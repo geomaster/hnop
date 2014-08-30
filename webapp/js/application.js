@@ -33,7 +33,8 @@ var frontpagesamplemodel = {
             id: 2,
             title: "A cure for cancer in Haskell and C", 
             website: "(github.com)", 
-            prefix: "Show HN",
+            prefix: "Show HN:",
+            prefix_url: "#/show",
             plus_count: 101,
             comment_count: 21, 
             author: "nautiluswarrior" 
@@ -69,8 +70,8 @@ var frontpagesamplemodel = {
                 id: 6,
                 title: "What are these strange dots on my penis?",
                 website: "",
-                prefix: "Ask HN",
-                prefix_route: "ask",
+                prefix: "Ask HN:",
+                prefix_url: "#/ask",
                 plus_count: 7,
                 comment_count: 2,
                 author: "syphilliswarrior"
@@ -119,8 +120,8 @@ var frontpagesamplemodel = {
                 id: 12,
                 title: "What are these strange dots on my penis?",
                 website: "",
-                prefix: "Ask HN",
-                prefix_route: "ask",
+                prefix: "Ask HN:",
+                prefix_url: "#/ask",
                 plus_count: 7,
                 comment_count: 2,
                 author: "syphilliswarrior"
@@ -171,8 +172,8 @@ var frontpagesamplemodel = {
                 id: 18,
                 title: "What are these strange dots on my penis?",
                 website: "",
-                prefix: "Ask HN",
-                prefix_route: "ask",
+                prefix: "Ask HN:",
+                prefix_url: "#/ask",
                 plus_count: 7,
                 comment_count: 2,
                 author: "syphilliswarrior"

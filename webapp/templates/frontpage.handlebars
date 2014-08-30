@@ -3,7 +3,14 @@
         <div class="primary-headlines">
         {{#each post in primary_headlines}}
             <div class="post">
-                <h2>{{#link-to 'posts' post}}{{post.title}}{{/link-to}} <span class="website">{{post.website}}</span></h2>
+                <h2>
+                    {{#if post.prefix}}
+                        <a href="{{unbound post.prefix_url}}" class="prefix">{{post.prefix}}</a>
+                    {{/if}}
+
+                    {{#link-to 'posts' post class="title"}}{{post.title}}{{/link-to}} 
+                    <span class="website">{{post.website}}</span>
+                </h2>
 
                 <div class="post-details">
                     <div class="icon icon-plus"></div>
@@ -22,7 +29,14 @@
         <div class="secondary-headlines">
         {{#each post in secondary_headlines}}
             <div class="post">
-                <h3>{{#link-to 'posts' post}}{{post.title}}{{/link-to}} <span class="website">{{post.website}}</span></h3>
+                <h3>
+                    {{#if post.prefix}}
+                        <a href="{{unbound post.prefix_url}}" class="prefix">{{post.prefix}}</a>
+                    {{/if}}
+
+                    {{#link-to 'posts' post class="title"}}{{post.title}}{{/link-to}} 
+                    <span class="website">{{post.website}}</span>
+                </h3>
 
                 <div class="post-details">
                     <div class="icon icon-plus"></div>
@@ -46,7 +60,10 @@
                 <ul>
                     {{#each post in posts}}
                         <li class="post">
-                            {{#link-to 'posts' post}}{{post.title}}{{/link-to}} <span class="website">{{post.website}}</span>
+                            {{#if post.prefix}}
+                                <a href="{{unbound post.prefix_url}}" class="prefix">{{post.prefix}}</a>
+                            {{/if}}
+                            {{#link-to 'posts' post class="title"}}{{post.title}}{{/link-to}} <span class="website">{{post.website}}</span>
 
                             <div class="post-details">
                                 <div class="icon icon-plus"></div>

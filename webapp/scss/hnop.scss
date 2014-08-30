@@ -296,7 +296,7 @@ a {
             color: $colorscheme-text-main;
             text-decoration: none;
         }
-        
+       
         a:hover {
             color: $colorscheme-text-accent;
         }
@@ -309,6 +309,17 @@ a {
     .post-details {
         font-size: 16pt;
     }
+}
+
+.post {
+    a.prefix {
+        color: $colorscheme-text-accent;
+    }
+
+    a.prefix:hover {
+        color: $colorscheme-accent;
+    }
+
 }
 
 @media screen and (max-width: $media-mobile-max) {
