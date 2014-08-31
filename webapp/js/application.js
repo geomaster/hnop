@@ -5,10 +5,10 @@ HNOP.ApplicationController = Ember.Controller.extend({
     
     appTitle: "Hacker News",
     navbar: [
-        { name: "navlink-top", url: "#", title: "Top" },
-        { name: "navlink-new", url: "#", title: "New" },
-        { name: "navlink-ask", url: "#", title: "Ask HN" },
-        { name: "navlink-show", url: "#", title: "Show HN" }
+        { name: "navlink-top", url: "#/", title: "Top" },
+        { name: "navlink-new", url: "#/new", title: "New" },
+        { name: "navlink-ask", url: "#/ask", title: "Ask HN" },
+        { name: "navlink-show", url: "#/show", title: "Show HN" }
     ],
     notificationCount: 3,
     karma: 540,
