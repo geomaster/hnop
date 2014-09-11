@@ -21,7 +21,7 @@
 ;; Routing rules
 
 (defroute "/api/hello.json" ()
-  (render-json '(:title "Hello people" :body "It is your birthday.")))
+  (render-plist-as-json '(:title "Hello people" :body "It is your birthday.")))
 
 ;;
 ;; Error pages
