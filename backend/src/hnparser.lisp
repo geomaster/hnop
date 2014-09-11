@@ -14,11 +14,18 @@
   html)
 
 (define-condition http-request-error (error)
-  ())
+  ()
+  (:report (lambda (condition stream)
+             (declare (ignore condition))
+             (format stream "drakma::http-request has returned an error condition."))))
 
 (define-condition http-unexpected-status-error (http-request-error)
-  (status :initarg (error "You must specify the status code.") 
+  ((status :initarg :status
+          :initform (error "You must specify the status code.") 
           :reader status))
+  (:report (lambda (condition stream)
+             (format stream "A status code of ~A has been received, which was not expected."
+                     (status condition)))))
 
 (defun get-posts (&optional (page :top))
   (multiple-value-bind (body status) 
