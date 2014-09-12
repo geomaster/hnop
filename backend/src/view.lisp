@@ -13,14 +13,14 @@
 
 (defun as-json (object &optional transform-fn)
   (setf (headers *response* :content-type) "application/json")
-  (if (transform-fn)
-    (transform-fn object)
+  (if transform-fn
+    (funcall transform-fn object)
     object))
 
-(defmacro render-plist-as-json (plist)
-  `(as-json plist yason:encode-plist))
 
 (defun render-plist-as-json (object)
   (setf (headers *response* :content-type) "application/json")
-  (yason:encode object))
+  (let ((s (make-string-output-stream)))
+    (yason:encode object s)
+    (get-output-stream-string s)))
 

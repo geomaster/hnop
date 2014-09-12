@@ -14,11 +14,20 @@
 
                ;; for CL-DBI
                :datafly
-               :sxql)
+               :sxql
+               
+               :css-selectors-stp
+               :css-selectors
+               
+               :cxml-stp
+               :closure-html
+               
+               :drakma
+               :yason)
   :components ((:module "src"
                 :components
                 ((:file "main" :depends-on ("config" "view" "db"))
-                 (:file "web" :depends-on ("view"))
+                 (:file "web" :depends-on ("view" "hnparser"))
                  (:file "view" :depends-on ("config"))
                  (:file "db" :depends-on ("config"))
                  (:file "hnparser" :depends-on ("config"))
