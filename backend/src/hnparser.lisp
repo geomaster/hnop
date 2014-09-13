@@ -9,6 +9,10 @@
 
 (in-package :backend.hnparser)
 
+;;
+;; CSS selectors and regex definitions
+;;
+
 (defparameter *url-root* "https://news.ycombinator.com")
 
 (defparameter *expected-posts* 30)
@@ -23,13 +27,13 @@
   "td:nth-child(3) span.comhead")
 
 (defparameter *get-itemid-regex*
-  "vote\\?for=([0-9]+)(&.*)$")
-
-(defparameter *get-auth-regex*
-  "&auth=([a-z0-9]+)&|$")
+  "item\\?id=([0-9]+)")
 
 (defparameter *post-upvote-link-selector*
   "td:nth-child(2) a:first-child")
+
+(defparameter *post-number-selector*
+  "td:first-child")
 
 (defparameter *post-pointcount-selector*
   "td:nth-child(2) span:first-child")
@@ -50,7 +54,14 @@
   "td:nth-child(2) *")
 
 (defparameter *time-regex*
-  "([0-9]+) (hour|day)s? ago")
+  "([0-9]+) (minute|hour|day)s? ago")
+
+(defparameter *post-number-regex*
+  "([0-9]+).")
+
+;;
+;; Conditions
+;;
 
 (define-condition http-request-error (error)
   ()
@@ -72,20 +83,39 @@
              (declare ( ignore condition))
              (format stream "There was an error in the HTML we received."))))
  
+;;
+;; Macros for convenience
+;;
+
+(defmacro select-and-extract ((node selector var) &body body)
+  (let ((element-name (gensym))
+        (text-node-name (gensym)))
+    `(let ((,element-name (css-selectors:query1 ,selector ,node)))
+       (when ,element-name
+         (let ((,text-node-name (stp:first-child ,element-name)))
+           (when (typep ,text-node-name 'stp:text)
+             (let ((,var ,text-node-name))
+               ,@body)))))))
+
+;; 
+;; HTTP stuff
+;;
+
 (defun build-cookie-header (user-cookie)
   (if user-cookie
     (cons "Cookie" 
           (concatenate 'string "user=" (drakma:url-encode user-cookie :utf-8)))))
  
-(defun extract-post-info (upvote-href)
-    (ppcre:register-groups-bind (itemid otherstring)
-        (*get-itemid-regex* upvote-href :sharedp t)
-      (list :itemid
-              itemid
-              :auth
-              (ppcre:register-groups-bind (authcode)
-                  (*get-auth-regex* otherstring :sharedp t)
-                authcode))))
+;;
+;; HTML parsing
+;;
+
+;; First row
+
+(defun extract-post-info (url)
+    (ppcre:register-groups-bind (itemid)
+        (*get-itemid-regex* url :sharedp t)
+      (list :itemid itemid)))
 
 (defun parse-post-title-link (node)
   (let ((text-node (stp:first-child node))
@@ -95,65 +125,62 @@
           :url
               (when href-attr (stp:value href-attr)))))
 
+(defun find-and-parse-number (node)
+  (select-and-extract (node *post-number-selector* text-node)
+    (ppcre:register-groups-bind (nmb) (*post-number-regex* (stp:data text-node))
+      (list :number (parse-integer nmb)))))
+
 (defun find-and-parse-title-link (node)
   (let ((title-link (css-selectors:query1 *post-title-selector* node)))
     (when title-link
       (parse-post-title-link title-link))))
 
-(defmacro select-and-extract ((node selector var) &body body)
-  (let ((element-name (gensym))
-        (text-node-name (gensym)))
-    `(let ((,element-name (css-selectors:query1 ,selector ,node)))
-       (when ,element-name
-         (let ((,text-node-name (stp:first-child ,element-name)))
-           (when (typep ,text-node-name 'stp:text)
-             (let ((,var (stp:data ,text-node-name)))
-               ,@body)))))))
-
 (defun find-and-parse-website (node)
-  (select-and-extract (node *post-website-selector* text)
+  (select-and-extract (node *post-website-selector* text-node)
     (list :website 
           (remove-if (lambda (chr)
                        (or (eq chr #\()
                            (eq chr #\))
                            (eq chr #\ ))) 
-                     text))))
+                     (stp:data text-node)))))
 
-(defun find-and-parse-upvote (node)
-  (let ((upvote-link (css-selectors:query1 *post-upvote-link-selector* node)))
-    (when upvote-link
-      (let ((upvote-href (stp:find-attribute-named upvote-link "href")))
-        (if upvote-href 
-          (extract-post-info (stp:value upvote-href))
-          (error 'html-error))))))
-
-(defun parse-post-first-row (node)
-  (append (find-and-parse-title-link node)
-          (find-and-parse-website node)
-          (find-and-parse-upvote node)))
+;; Second row
 
 (defun find-and-parse-points (node)
-  (select-and-extract (node *post-pointcount-selector* text) 
-    (cl-ppcre:register-groups-bind (pointcount) (*pointcount-regex* text)
-      (list :points pointcount))))
+  (select-and-extract (node *post-pointcount-selector* text-node) 
+    (cl-ppcre:register-groups-bind (pointcount) (*pointcount-regex* 
+                                                  (stp:data text-node))
+      (list :points (parse-integer pointcount)))))
 
 (defun find-and-parse-username (node)
-  (select-and-extract (node *post-username-selector* text)
-    (list :username text)))
+  (select-and-extract (node *post-username-selector* text-node)
+    (list :username (stp:data text-node))))
+
+(defun extract-post-itemid (node)
+  (let ((href-attr (stp:find-attribute-named node "href")))
+    (when href-attr
+      (cl-ppcre:register-groups-bind (itemid) (*get-itemid-regex* (stp:value href-attr))
+        itemid))))
 
 (defun find-and-parse-comments (node)
-  (select-and-extract (node *post-comments-selector* text)
-    (if (eql text "discuss")
-      (list :comments 0)
-      (cl-ppcre:register-groups-bind (commentcount) (*commentcount-regex* text)
-        (list :comments commentcount)))))
+  (select-and-extract (node *post-comments-selector* text-node)
+    (list :comments (if (eql (stp:data text-node) "discuss")
+                      0
+                      (cl-ppcre:register-groups-bind (commentcount) 
+                                                     (*commentcount-regex* (stp:data text-node))
+                        (parse-integer commentcount)))
+          :itemid (extract-post-itemid (stp:parent text-node)))))
 
 (defun timestring->offset (timestring)
   (ppcre:register-groups-bind (integral designator) (*time-regex* timestring)
     (* (parse-integer integral)
-       (if (string= designator "hour")
-         -3600
-         -86400))))
+       (cond ( (string= designator "hour")
+               -3600)
+             ((string= designator "minute")
+              -60)
+             ((string= designator "day")
+              -86400)
+             (t (error 'html-error))))))
 
 (defun find-and-parse-time (node)
   (let ((child (stp:find-recursively-if 
@@ -164,11 +191,18 @@
     (when child
       (list :time (timestring->offset (stp:data child))))))
 
+;; Aggregate functions
+
 (defun parse-post-second-row (node)
   (append (find-and-parse-points node)
           (find-and-parse-comments node)
           (find-and-parse-time node)
           (find-and-parse-username node)))
+
+(defun parse-post-first-row (node)
+  (append (find-and-parse-number node)
+          (find-and-parse-title-link node)
+          (find-and-parse-website node)))
 
 (defun parse-posts (head posts)
   (if head
@@ -188,20 +222,24 @@
         posts)
       (error 'html-error))))
 
-(defun get-posts (&optional user-cookie (page :top))
+(defun get-posts (&key user-cookie (channel :top) page)
   (multiple-value-bind (body status) 
     (handler-case (drakma:http-request 
-                    (concatenate 'string *url-root* (cond ((eq page :top)
+                    (concatenate 'string *url-root* (cond ((eq channel :top)
                                                            "/news")
-                                                          ((eq page :new)
+                                                          ((eq channel :new)
                                                            "/newest")
-                                                          ((eq page :show)
+                                                          ((eq channel :show)
                                                            "/show")
-                                                          ((eq page :ask)
+                                                          ((eq channel :ask)
                                                            "/ask")
-                                                          ((eq page :shownew)
+                                                          ((eq channel :shownew)
                                                            "/shownew")
-                                                          (t "")))
+                                                          ((eq channel :jobs)
+                                                           "/jobs")
+                                                          (t ""))
+                                 (when page
+                                   (concatenate 'string "?p=" (write-to-string page))))
                     :additional-headers
                     (list (build-cookie-header user-cookie)))
       (error () (error 'http-request-error)))
