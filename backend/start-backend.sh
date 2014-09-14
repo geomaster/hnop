@@ -1,3 +1,3 @@
 #!/bin/sh
-ccl -l backend.asd -l start-backend.lisp
+ccl -l hnopd.asd -l start-hnopd.lisp
 

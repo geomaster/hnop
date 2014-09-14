@@ -1,9 +1,9 @@
 (in-package :cl-user)
-(defpackage backend-test
+(defpackage hnopd-test
   (:use :cl
-        :backend
+        :hnopd
         :cl-test-more))
-(in-package :backend-test)
+(in-package :hnopd-test)
 
 (plan nil)
 

@@ -1,13 +1,13 @@
 (in-package :cl-user)
-(defpackage backend.hnparser
+(defpackage hnopd.hnparser
   (:use :cl
-        :backend.config)
+        :hnopd.config)
   (:export :get-posts
            :http-request-error
            :http-unexpected-status-error
            :html-error))
 
-(in-package :backend.hnparser)
+(in-package :hnopd.hnparser)
 
 ;;
 ;; CSS selectors and regex definitions

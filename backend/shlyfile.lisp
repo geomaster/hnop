@@ -1,6 +1,6 @@
 ;; -*- mode: common-lisp -*-
 
-(ql:quickload '(:backend :split-sequence))
+(ql:quickload '(:hnopd :split-sequence))
 
 (import 'split-sequence:split-sequence)
 
@@ -11,7 +11,7 @@
                    (server :fcgi)
                    (debug nil))
   (flet ((start (&rest args)
-           (apply #'backend:start
+           (apply #'hnopd:start
                   :debug debug :server server args)))
     (let ((server-starter-port (asdf::getenv "SERVER_STARTER_PORT")))
       (if server-starter-port

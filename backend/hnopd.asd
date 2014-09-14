@@ -1,9 +1,9 @@
 (in-package :cl-user)
-(defpackage backend-asd
+(defpackage hnopd-asd
   (:use :cl :asdf))
-(in-package :backend-asd)
+(in-package :hnopd-asd)
 
-(defsystem backend
+(defsystem hnopd
   :version "0.1"
   :author "geomaster"
   :license ""
@@ -33,4 +33,4 @@
                  (:file "hnparser" :depends-on ("config"))
                  (:file "config"))))
   :description ""
-  :in-order-to ((test-op (load-op backend-test))))
+  :in-order-to ((test-op (load-op hnopd-test))))

@@ -1,7 +1,7 @@
 (in-package :cl-user)
-(defpackage backend.db
+(defpackage hnopd.db
   (:use :cl)
-  (:import-from :backend.config
+  (:import-from :hnopd.config
                 :config)
   (:import-from :datafly
                 :*connection*
@@ -9,7 +9,7 @@
   (:export :connection-settings
            :db
            :with-connection))
-(in-package :backend.db)
+(in-package :hnopd.db)
 
 (defun connection-settings (&optional (db :maindb))
   (cdr (assoc db (config :databases))))

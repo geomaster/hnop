@@ -1,6 +1,6 @@
-(ql:quickload :backend)
+(ql:quickload :hnopd)
 
-(defpackage backend.app
+(defpackage hnopd.app
   (:use :cl)
   (:import-from :clack
                 :call)
@@ -17,13 +17,13 @@
   (:import-from :ppcre
                 :scan
                 :regex-replace)
-  (:import-from :backend.web
+  (:import-from :hnopd.web
                 :*web*)
-  (:import-from :backend.config
+  (:import-from :hnopd.config
                 :config
                 :productionp
                 :*static-directory*))
-(in-package :backend.app)
+(in-package :hnopd.app)
 
 (defun build-path (path)
   (let* ((newpath (concatenate 'string
@@ -31,7 +31,7 @@
                                  "/build-release"
                                  "/build-debug") 
                                path)))
-    (if (ppcre:scan "^(?:/api/)" path)
+    (if (ppcre:scan "^(?:/index\\.html$|)" path)
       nil
       (if (ppcre:scan "^(?:/?)$" path)
         (concatenate 'string newpath "/index.html")

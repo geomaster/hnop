@@ -1,14 +1,14 @@
 (in-package :cl-user)
-(defpackage backend-test-asd
+(defpackage hnopd-test-asd
   (:use :cl :asdf))
-(in-package :backend-test-asd)
+(in-package :hnopd-test-asd)
 
-(defsystem backend-test
+(defsystem hnopd-test
   :author "geomaster"
   :license ""
-  :depends-on (:backend
+  :depends-on (:hnopd
                :cl-test-more)
   :components ((:module "t"
                 :components
-                ((:file "backend"))))
+                ((:file "hnopd"))))
   :perform (load-op :after (op c) (asdf:clear-system c)))

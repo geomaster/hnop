@@ -1,5 +1,5 @@
 (in-package :cl-user)
-(defpackage backend.config
+(defpackage hnopd.config
   (:use :cl)
   (:import-from :envy
                 :config-env-var
@@ -11,11 +11,11 @@
            :appenv
            :developmentp
            :productionp))
-(in-package :backend.config)
+(in-package :hnopd.config)
 
 (setf (config-env-var) "APP_ENV")
 
-(defparameter *application-root*   (asdf:system-source-directory :backend))
+(defparameter *application-root*   (asdf:system-source-directory :hnopd))
 (defparameter *static-directory*   (merge-pathnames #P"../webapp/" *application-root*))
 
 (defconfig :common

@@ -1,16 +1,16 @@
 (in-package :cl-user)
-(defpackage backend
+(defpackage hnopd
   (:use :cl)
-  (:import-from :backend.config
+  (:import-from :hnopd.config
                 :config)
   (:import-from :clack
                 :clackup)
   (:export :start
            :stop))
-(in-package :backend)
+(in-package :hnopd)
 
 (defvar *appfile-path*
-  (asdf:system-relative-pathname :backend #P"app.lisp"))
+  (asdf:system-relative-pathname :hnopd #P"app.lisp"))
 
 (defvar *handler* nil)
 

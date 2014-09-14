@@ -1,14 +1,14 @@
 (in-package :cl-user)
-(defpackage backend.web
+(defpackage hnopd.web
   (:use :cl
         :caveman2
-        :backend.config
-        :backend.view
-        :backend.db
+        :hnopd.config
+        :hnopd.view
+        :hnopd.db
         :datafly
         :sxql)
   (:export :*web*))
-(in-package :backend.web)
+(in-package :hnopd.web)
 
 ;;
 ;; Application
@@ -36,7 +36,7 @@
 
 (defroute "/api/news/top" ()
           (setf (headers *response* :content-type) "application/json; charset=utf-8")
-          (render-json-newslist (backend.hnparser:get-posts)))
+          (render-json-newslist (hnopd.hnparser:get-posts)))
 
 ;;
 ;; Error pages
