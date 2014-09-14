@@ -20,24 +20,30 @@
 ;;
 ;; Routing rules
 
-(defun render-json-newslist (newslist)
-  (yason:with-output-to-string* (:indent t)
-    (yason:with-array ()
-      (loop for item across newslist do
-            (yason:with-object ()
-              (yason:encode-object-element "title" (getf item :title))
-              (yason:encode-object-element "url" (getf item :url))
-              (yason:encode-object-element "author" (getf item :author))
-              (yason:encode-object-element "points" (getf item :points))
-              (yason:encode-object-element "comments" (getf item :comments)))))))
 
 (defroute "/api/hello.json" ()
             (render-plist-as-json '(:title "Hello people" :body "It is your birthday.")))
 
-(defroute "/api/news/top" ()
-          (setf (headers *response* :content-type) "application/json; charset=utf-8")
-          (render-json-newslist (hnopd.hnparser:get-posts)))
-
+(defroute ("/api/news/(?:(top|new|show|ask|jobs)(?:/([1-9][0-9]*))?)$" :regexp t) (&key captures)
+          (as-json 
+            (let ((chstr (first captures))
+                  (pgstr (second captures)))
+              (hnopd.view:render-json-newslist (hnopd.hnparser:get-posts :channel
+                                                                         (cond ((string= chstr "top")
+                                                                                :top)
+                                                                               ((string= chstr "new")
+                                                                                :new)
+                                                                               ((string= chstr "show")
+                                                                                :show)
+                                                                               ((string= chstr "ask")
+                                                                                :ask)
+                                                                               ((string= chstr "jobs")
+                                                                                :jobs)
+                                                                               (t :top))
+                                                                         :page
+                                                                         (if pgstr
+                                                                           (parse-integer pgstr)
+                                                                           1))))))
 ;;
 ;; Error pages
 

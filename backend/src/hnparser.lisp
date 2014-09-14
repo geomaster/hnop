@@ -2,7 +2,10 @@
 (defpackage hnopd.hnparser
   (:use :cl
         :hnopd.config)
+  (:import-from :hnopd.config
+                :*hn-url-root*)
   (:export :get-posts
+           :extract-itemid-from-url
            :http-request-error
            :http-unexpected-status-error
            :html-error))
@@ -13,51 +16,22 @@
 ;; CSS selectors and regex definitions
 ;;
 
-(defparameter *url-root* "https://news.ycombinator.com")
-
+(defparameter *url-root* *hn-url-root*)
 (defparameter *expected-posts* 30)
-
-(defparameter *first-tbody-selector* 
-  "center table:first-child tbody tr:nth-child(3) td table tbody")
-
-(defparameter *post-title-selector*
-  "td:nth-child(3) a:first-child")
-
-(defparameter *post-website-selector*
-  "td:nth-child(3) span.comhead")
-
-(defparameter *get-itemid-regex*
-  "item\\?id=([0-9]+)")
-
-(defparameter *post-upvote-link-selector*
-  "td:nth-child(2) a:first-child")
-
-(defparameter *post-number-selector*
-  "td:first-child")
-
-(defparameter *post-pointcount-selector*
-  "td:nth-child(2) span:first-child")
-
-(defparameter *post-username-selector*
-  "td:nth-child(2) a:nth-child(3)")
-
-(defparameter *post-comments-selector*
-  "td:nth-child(2) a:nth-child(5)")
-
-(defparameter *commentcount-regex*
-  "([0-9]+) comments?")
-
-(defparameter *pointcount-regex*
-  "([0-9]+) points?")
-
-(defparameter *post-time-selector*
-  "td:nth-child(2) *")
-
-(defparameter *time-regex*
-  "([0-9]+) (minute|hour|day)s? ago")
-
-(defparameter *post-number-regex*
-  "([0-9]+).")
+(defparameter *first-tbody-selector* "center table:first-child tbody tr:nth-child(3) td table tbody")
+(defparameter *post-title-selector* "td:nth-child(3) a")
+(defparameter *post-website-selector* "td:nth-child(3) span.comhead")
+(defparameter *get-itemid-regex* "item\\?id=([0-9]+)")
+(defparameter *post-upvote-link-selector* "td:nth-child(2) a:first-child")
+(defparameter *post-number-selector* "td:first-child")
+(defparameter *post-pointcount-selector* "td:nth-child(2) span:first-child")
+(defparameter *post-username-selector* "td:nth-child(2) a:nth-child(3)")
+(defparameter *post-comments-selector* "td:nth-child(2) a:last-child")
+(defparameter *commentcount-regex* "([0-9]+) comments?")
+(defparameter *pointcount-regex* "([0-9]+) points?")
+(defparameter *post-time-selector* "td:nth-child(2) *")
+(defparameter *time-regex* "([0-9]+) (minute|hour|day)s? ago")
+(defparameter *post-number-regex* "([0-9]+).")
 
 ;;
 ;; Conditions
@@ -112,10 +86,10 @@
 
 ;; First row
 
-(defun extract-post-info (url)
+(defun extract-itemid-from-url (url)
     (ppcre:register-groups-bind (itemid)
         (*get-itemid-regex* url :sharedp t)
-      (list :itemid itemid)))
+      itemid))
 
 (defun parse-post-title-link (node)
   (let ((text-node (stp:first-child node))
@@ -123,7 +97,8 @@
     (list :title 
           (when (typep text-node 'stp:text) (stp:data text-node))
           :url
-              (when href-attr (stp:value href-attr)))))
+          (when href-attr (stp:value href-attr))
+          :dead (not href-attr))))
 
 (defun find-and-parse-number (node)
   (select-and-extract (node *post-number-selector* text-node)
@@ -159,17 +134,16 @@
 (defun extract-post-itemid (node)
   (let ((href-attr (stp:find-attribute-named node "href")))
     (when href-attr
-      (cl-ppcre:register-groups-bind (itemid) (*get-itemid-regex* (stp:value href-attr))
-        itemid))))
+      (extract-itemid-from-url (stp:value href-attr)))))
 
 (defun find-and-parse-comments (node)
   (select-and-extract (node *post-comments-selector* text-node)
-    (list :comments (if (eql (stp:data text-node) "discuss")
+    (list :comments (if (string= (stp:data text-node) "discuss")
                       0
                       (cl-ppcre:register-groups-bind (commentcount) 
                                                      (*commentcount-regex* (stp:data text-node))
-                        (parse-integer commentcount)))
-          :itemid (extract-post-itemid (stp:parent text-node)))))
+                                                     (parse-integer commentcount)))
+          :itemid (or (extract-post-itemid (stp:parent text-node))))))
 
 (defun timestring->offset (timestring)
   (ppcre:register-groups-bind (integral designator) (*time-regex* timestring)
@@ -204,21 +178,33 @@
           (find-and-parse-title-link node)
           (find-and-parse-website node)))
 
+(defun parse-post (nodes)
+  (let ((result (append
+                 (parse-post-first-row (first nodes))
+                 (parse-post-second-row (second nodes)))))
+    (unless (member :itemid result)
+      (let ((itemid (extract-itemid-from-url (getf result :url))))
+        (when itemid
+          (nconc result (list :itemid itemid)))))
+    result))
+
 (defun parse-posts (head posts)
-  (if head
-    (let ((post-entry (append 
-                        (parse-post-first-row (first head)) 
-                        (parse-post-second-row (second head)))))
+  (if (>= (length head) 3)
+    (let ((post-entry (parse-post head)))
       (when post-entry
         (vector-push-extend post-entry posts))
       (parse-posts (cdddr head) posts))))
 
-(defun parse-posts-html (html)
+(defun parse-posts-html (html channel)
   (let* ((document (chtml:parse html (cxml-stp:make-builder)))
          (posts (make-array 30 :adjustable t :fill-pointer 0)))
     (if document
       (let ((main-table-body (css-selectors:query1 *first-tbody-selector* document)))
-        (parse-posts (stp:list-children main-table-body) posts)
+        (parse-posts (funcall (cond ((eq channel :show)
+                                     #'cdddr)
+                                    ((eq channel :jobs)
+                                     #'cddr)
+                                    (t #'identity)) (stp:list-children main-table-body)) posts)
         posts)
       (error 'html-error))))
 
@@ -244,6 +230,6 @@
                     (list (build-cookie-header user-cookie)))
       (error () (error 'http-request-error)))
     (if (eq status 200) 
-      (parse-posts-html body)
+      (parse-posts-html body channel)
       (error 'http-unexpected-status-error :status status))))
 

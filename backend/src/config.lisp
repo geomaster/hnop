@@ -17,6 +17,7 @@
 
 (defparameter *application-root*   (asdf:system-source-directory :hnopd))
 (defparameter *static-directory*   (merge-pathnames #P"../webapp/" *application-root*))
+(defparameter *hn-url-root*        "https://news.ycombinator.com")
 
 (defconfig :common
   `(:databases ((:maindb :sqlite3 :database-name "hnop"))))

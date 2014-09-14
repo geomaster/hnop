@@ -31,11 +31,11 @@
                                  "/build-release"
                                  "/build-debug") 
                                path)))
-    (if (ppcre:scan "^(?:/index\\.html$|)" path)
-      nil
-      (if (ppcre:scan "^(?:/?)$" path)
+    (if (ppcre:scan "^(?:/index\\.html$|/images/|/fonts/|/js/|/css/)" path)
+      (if (string= "/" path)
         (concatenate 'string newpath "/index.html")
-        newpath))))
+        newpath)
+      nil)))
 
 (builder
   (<clack-middleware-static>
