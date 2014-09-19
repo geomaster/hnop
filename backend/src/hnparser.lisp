@@ -31,7 +31,7 @@
 (defparameter *pointcount-regex* "([0-9]+) points?")
 (defparameter *post-time-selector* "td:nth-child(2) *")
 (defparameter *time-regex* "([0-9]+) (minute|hour|day)s? ago")
-(defparameter *post-number-regex* "([0-9]+).")
+(defparameter *post-number-regex* "([0-9]+)\.")
 
 ;;
 ;; Conditions
