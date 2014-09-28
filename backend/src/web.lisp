@@ -24,7 +24,7 @@
 (defroute "/api/hello.json" ()
             (render-plist-as-json '(:title "Hello people" :body "It is your birthday.")))
 
-(defroute ("/api/news/(?:(top|new|show|ask|jobs)(?:/([1-9][0-9]*))?)$" :regexp t) (&key captures)
+(defroute ("/api/news/(?:(top|new|show(?:new)?|ask|jobs)(?:/([1-9][0-9]*))?)$" :regexp t) (&key captures)
           (as-json 
             (let ((chstr (first captures))
                   (pgstr (second captures)))
@@ -39,6 +39,8 @@
                                                                                 :ask)
                                                                                ((string= chstr "jobs")
                                                                                 :jobs)
+                                                                               ((string= chstr "shownew")
+                                                                                :shownew)
                                                                                (t :top))
                                                                          :page
                                                                          (if pgstr
