@@ -20,7 +20,7 @@
 (defparameter *hn-url-root*        "https://news.ycombinator.com")
 
 (defconfig :common
-  `(:databases ((:maindb :sqlite3 :database-name "hnop"))))
+           `(:databases ((:maindb :sqlite3 :database-name ,(write-to-string (merge-pathnames #P"db/hnop.db" *application-root*))))))
 
 (defconfig |development|
   '())
